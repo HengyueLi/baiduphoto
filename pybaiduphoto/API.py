@@ -90,7 +90,41 @@ class Album():
 
     def __init__(self,info,req):
         self.info = info
-        self.req = req
+        self.req:Requests = req
+
+    '''
+    API: https://photo.baidu.com/youai/album/v1/listfile
+    Method: POST
+    Param: {
+            cursor=,
+            album_id=12345,
+            need_amount=1,
+            limit=100&passwd=
+            }
+    {
+            'list': [{
+                'album_id': "xxxx",
+                'path': "xxx.jpg"
+                }],
+            'has_more': 1,
+            'errno': 0,
+            }
+    '''
+    def get_pictures(self, cursor='',need_amount=1,limit=100,password='')->dict:
+        pageInfo = self.req.postReqJson(
+                url = 'https://photo.baidu.com/youai/album/v1/listfile',
+                cursor= cursor,
+                album_id= self.info['album_id'],
+                need_amount=need_amount,
+                limit=limit,
+                passwd=password
+                )
+
+        return {
+                'items': [OnlineIterm(i,self.req) for i in pageInfo['list']],
+                'has_more': pageInfo['has_more'],
+                'cursor': pageInfo['cursor'],
+        }
 
     def append(self,itemObjs):
         if type(itemObjs) is not list:
