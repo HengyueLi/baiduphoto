@@ -66,7 +66,7 @@ class OnlineIterm:
         if isCheckMd5:
             localMd5 = hashlib.md5(req.content).hexdigest()
             if self.info["md5"] != localMd5:
-                info.error("md5 check error, file=[{}]".format(filePath))
+                logging.info.error("md5 check error, file=[{}]".format(filePath))
 
     def delete(self, fdis_list=None):
         url = "https://photo.baidu.com/youai/file/v1/delete"
