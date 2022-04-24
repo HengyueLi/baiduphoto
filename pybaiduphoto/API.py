@@ -5,7 +5,7 @@ import logging
 
 from .Requests import Requests
 
-from typing import List, TypedDict
+from typing import List, TypedDict, Any
 
 # def get_md5_by_binString(binString):
 #     return hashlib.md5(binString).hexdigest()
@@ -42,8 +42,23 @@ def get_file_fullContent(filePath):
 
 class OnlineIterm:
     def __init__(self, info, req):
-        self.info = info
+        self.__info = info
         self.req = req
+        self.info = {}
+
+    def __getattribute__(self, __name: str) -> Any:
+        if __name != "info":
+            return object.__getattribute__(self, __name)
+
+        if object.__getattribute__(self, "info") != {}:
+            return object.__getattribute__(self, __name)
+
+        if not hasattr(self.__info, "__call__"):
+            object.__setattr__(self, "info", self.__info)
+            return object.__getattribute__(self, __name)
+
+        object.__setattr__(self, "info", self.__info())
+        return self.info
 
     def download(self, DirPath, isCheckMd5=True):
         r = self.req.getReqJson(
@@ -110,8 +125,14 @@ class Album:
             url="https://photo.baidu.com/youai/album/v1/listfile", data=params
         )
 
+        def get_fsid(pic_info):
+            def get_data():
+                return self.__reget_fsid__(pic_info=pic_info)
+
+            return get_data
+
         return {
-            "items": [OnlineIterm(i, self.req) for i in pageInfo["list"]],
+            "items": [OnlineIterm(get_fsid(i), self.req) for i in pageInfo["list"]],
             "has_more": pageInfo["has_more"],
             "cursor": pageInfo["cursor"],
         }
