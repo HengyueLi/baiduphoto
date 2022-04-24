@@ -5,8 +5,7 @@ import logging
 
 from .Requests import Requests
 
-
-
+from typing import List, TypedDict
 
 # def get_md5_by_binString(binString):
 #     return hashlib.md5(binString).hexdigest()
@@ -85,6 +84,10 @@ class OnlineIterm():
         return str(self.info['fsid'])
 
 
+class AlbumInfo(TypedDict):
+    items: List[OnlineIterm]
+    has_more: bool
+    cursor:str
 
 class Album():
 
@@ -111,7 +114,7 @@ class Album():
             'errno': 0,
             }
     '''
-    def get_pictures(self, cursor='',need_amount=1,limit=100,password='')->dict:
+    def get_pictures(self,cursor='',need_amount=1,limit=100,password='')->AlbumInfo:
         params = {
                 'album_id': self.info['album_id'],
                 'need_amount':need_amount,
@@ -163,7 +166,7 @@ class Album():
                 'has_more': pageInfo['has_more'],
                 'cursor': pageInfo['cursor'],
         }
-    def __reget_fsid__(self, pic_info)->dict:
+    def __reget_fsid__(self, pic_info)->AlbumInfo:
         params = {
                 'album_id': self.info['album_id'],
                 'uk': self.info['cover_info']['uk'],
