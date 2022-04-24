@@ -157,10 +157,6 @@ class Album:
 
         return pic_info
 
-    def download_pic(self, item: OnlineIterm, dirpath: str):
-        item.info = self.__reget_fsid__(item.info)
-        return item.download(dirpath)
-
     def append(self, itemObjs):
         if type(itemObjs) is not list:
             itemObjlist = [itemObjs]
