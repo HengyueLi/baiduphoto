@@ -95,74 +95,21 @@ class Album:
         self.info = info
         self.req: Requests = req
 
-    """
-    API: https://photo.baidu.com/youai/album/v1/listfile
-    Method: POST
-    Param: {
-            cursor=,
-            album_id=12345,
-            need_amount=1,
-            limit=100&passwd=
-            }
-    {
-            'list': [{
-                'album_id': "xxxx",
-                'path': "xxx.jpg"
-                'tid':"xxx"
-                }],
-            'has_more': 1,
-            'errno': 0,
-            }
-    """
-
     def get_pictures(
         self, cursor="", need_amount=1, limit=100, password=""
     ) -> AlbumInfo:
         params = {
+            "cursor": cursor,
             "album_id": self.info["album_id"],
             "need_amount": need_amount,
             "limit": limit,
+            "passwd": password,
         }
-
-        if cursor != "":
-            params["cursor"] = cursor
-        if password != "":
-            params["passwd"] = password
 
         pageInfo = self.req.postReqJson(
             url="https://photo.baidu.com/youai/album/v1/listfile", data=params
         )
-        """
-        URL: https://photo.baidu.com/youai/album/v1/copyfile?clienttype=70
-        Method: POST
-        Params: {
-                'album_id': '',
-                'uk': '',
-                'tid': '',
-                'list': [
-                    "fsid":""
-                    ]
-                }
-        res: {
-                'list': [
-                    {
-                        "from_fsid": 140373302001753,
-                        "fsid": 522136190789429,
-                        "path": ".jpg",
-                        "shoot_time": 1619209924,
-                    }
-                    ],
-                "errno": 0,
-                request_id: 311534367474440450
-                }
-        """
-        """
-        URL: https://photo.baidu.com/youai/file/v2/download?clienttype=70
-        Method: GET
-        Params: {
-                fsid=522136190789429
-                }
-        """
+
         return {
             "items": [OnlineIterm(i, self.req) for i in pageInfo["list"]],
             "has_more": pageInfo["has_more"],
@@ -179,10 +126,14 @@ class Album:
         res = self.req.postReqJson(
             url="https://photo.baidu.com/youai/album/v1/copyfile", data=params
         )
+
         if res["errno"] != 0:
             return pic_info
+
         logging.debug(res)
+
         pic_info["fsid"] = res["list"][0]["fsid"]
+
         return pic_info
 
     def download_pic(self, item: OnlineIterm, dirpath: str):
