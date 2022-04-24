@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
-import sys,os,datetime
+import sys, os, datetime
 
 
-#--------------
-name    = 'pybaiduphoto'
+# --------------
+name = "pybaiduphoto"
 scripts = []
 description = "A simple API to interact with baidu-photo"
-#--------------
+# --------------
 
 
-
-
-python   = sys.executable
+python = sys.executable
 filepath = os.path.realpath(__file__)
 projpath = os.path.dirname(filepath)
-dist = os.path.join(projpath,'dist')
-passDir = os.path.join(os.environ['HOME'],'Dropbox/AutoPassword')
+dist = os.path.join(projpath, "dist")
+passDir = os.path.join(os.environ["HOME"], "Dropbox/AutoPassword")
 sys.path.insert(0, passDir)
 import password as pw
 
 
-
-setupcontext = '''
+setupcontext = """
 import setuptools
 #from setuptools import setup
 
@@ -40,26 +37,28 @@ setuptools.setup(
     python_requires='>=3.6',
     url = "https://github.com/HengyueLi/baiduphoto",
 )
-'''.format(name    = name ,
-           scripts = str(scripts),
-           version = datetime.datetime.now().strftime("%Y.%m.%d.%H%M") ,
-           description = description,
-           install_requires = [ i for i in open('requirements.txt').read().split('\n') if len(i)>1  ] )
+""".format(
+    name=name,
+    scripts=str(scripts),
+    version=datetime.datetime.now().strftime("%Y.%m.%d.%H%M"),
+    description=description,
+    install_requires=[
+        i for i in open("requirements.txt").read().split("\n") if len(i) > 1
+    ],
+)
 
 
-
-
-
-os.system('rm -rf {}/*'.format(dist))
-os.system('rm -rf setup.py')
-with open('setup.py','w') as f:
+os.system("rm -rf {}/*".format(dist))
+os.system("rm -rf setup.py")
+with open("setup.py", "w") as f:
     f.write(setupcontext)
-os.system('{} setup.py sdist'.format(python))
-#---------------------------------------
+os.system("{} setup.py sdist".format(python))
+# ---------------------------------------
 # upload with username&password
 command = "twine upload dist/* -u {username} -p {password}".format(
-                username = pw.GetAutoPasswd('pip','username').get(),
-                password = pw.GetAutoPasswd('pip','password').get() )
+    username=pw.GetAutoPasswd("pip", "username").get(),
+    password=pw.GetAutoPasswd("pip", "password").get(),
+)
 os.system(command)
-#---------------------------------------
-os.system('rm -rf dist setup.py *egg-info*')
+# ---------------------------------------
+os.system("rm -rf dist setup.py *egg-info*")
