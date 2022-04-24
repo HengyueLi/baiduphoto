@@ -170,11 +170,11 @@ class Album():
                 'tid': pic_info['tid'],
                 'list': "[{\"fsid\":%s}]"%(pic_info['fsid']),
                 }
-        res = self.req.postReqJson(url='https://photo.baidu.com/youai/album/v1/copyfile?clienttype=70&bdstoken=80bf8beaf28275d9bf8c1dc9c4d6786b',
+        res = self.req.postReqJson(url='https://photo.baidu.com/youai/album/v1/copyfile',
                 data=params)
         if res['errno'] != 0:
             return pic_info
-        print(res)
+        logging.debug(res)
         pic_info['fsid'] = res['list'][0]['fsid']
         return pic_info
 
