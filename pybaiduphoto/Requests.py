@@ -1,6 +1,8 @@
 import requests
 import logging
 
+logger = logging.getLogger(__name__)
+
 
 class Requests:
     def __init__(self, cookies, proxies=None):
@@ -44,7 +46,7 @@ class Requests:
                 d = l
                 break
         if d is None:
-            logging.error("can not get bdstoken")
+            logger.error("can not get bdstoken")
             return
         return (
             l.split("=")[1]
@@ -93,7 +95,7 @@ class Requests:
         if data["errno"] == 0:
             return data
         else:
-            logging.error("request return error, return = {}".format(data))
+            logger.error("request return error, return = {}".format(data))
             return data
         return
 
@@ -102,6 +104,6 @@ class Requests:
         if data["errno"] == 0:
             return data
         else:
-            logging.error("request return error, return = {}".format(data))
+            logger.error("request return error, return = {}".format(data))
             return data
         return

@@ -7,6 +7,8 @@ from .Requests import Requests
 
 from typing import List, TypedDict, Any
 
+logger = logging.getLogger(__name__)
+
 # def get_md5_by_binString(binString):
 #     return hashlib.md5(binString).hexdigest()
 #
@@ -81,7 +83,7 @@ class OnlineIterm:
         if isCheckMd5:
             localMd5 = hashlib.md5(req.content).hexdigest()
             if self.info["md5"] != localMd5:
-                logging.info.error("md5 check error, file=[{}]".format(filePath))
+                logger.info.error("md5 check error, file=[{}]".format(filePath))
 
     def delete(self, fdis_list=None):
         url = "https://photo.baidu.com/youai/file/v1/delete"
@@ -91,7 +93,7 @@ class OnlineIterm:
             "clienttype": "70",
             "fsid_list": "[{}]".format(",".join(fdis_list)),
         }
-        logging.debug("item-delete:get params=[{}]".format(params))
+        logger.debug("item-delete:get params=[{}]".format(params))
         r = self.req.getReqJson(url, params=params)
         return r
 
@@ -151,7 +153,7 @@ class Album:
         if res["errno"] != 0:
             return pic_info
 
-        logging.debug(res)
+        logger.debug(res)
 
         pic_info["fsid"] = res["list"][0]["fsid"]
 
@@ -183,7 +185,7 @@ class Album:
                 ),
             )
         )
-        logging.debug("Album-append, getParams=[{}]".format(params))
+        logger.debug("Album-append, getParams=[{}]".format(params))
         response = self.req.getReqJson(url, params=params)
         return response
 
@@ -256,7 +258,7 @@ class API:
             "clienttype": "70",
             #             'bdstoken': self.req.bdstoken, # requird
         }
-        logging.debug("upload_step1,postData={}".format(postdata))
+        logger.debug("upload_step1,postData={}".format(postdata))
         data = self.req.postReqJson(
             url="https://photo.baidu.com/youai/file/v1/precreate",
             params=params,
@@ -283,7 +285,7 @@ class API:
         )
         # with open(filePath, 'rb') as f:
         # response = self.req.post('https://c3.pcs.baidu.com/rest/2.0/pcs/superfile2', params=params, files={fileName: f} )
-        logging.debug("upload_step2,postParams={}".format(params))
+        logger.debug("upload_step2,postParams={}".format(params))
         response = self.req.post(
             "https://c3.pcs.baidu.com/rest/2.0/pcs/superfile2",
             params=params,
@@ -310,7 +312,7 @@ class API:
             "ctype": "11",
             #           'media_info': 'QD1xoOX.....'
         }
-        logging.debug("upload_step3,postData={}".format(data))
+        logger.debug("upload_step3,postData={}".format(data))
         return self.req.post(
             "https://photo.baidu.com/youai/file/v1/create", params=params, data=data
         ).json()
