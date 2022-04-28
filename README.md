@@ -2,6 +2,9 @@
 一刻相册 API
 
 
+(请PR的同学方向指向`develop`分支）
+
+
 # 安装
 ```
 pip install pybaiduphoto
