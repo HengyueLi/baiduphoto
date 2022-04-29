@@ -122,6 +122,10 @@ a = api.createNewAlbum(Name='test')
 在初始化对象的时候加入`proxies`字段,例如
 `api = API(cookies = browser_cookie3.chrome() , proxies = {"https":"socks5://127.0.0.1:1080"} )`。`proxies`的格式同`requests`库需求一致。
 
+# To do list
+- 批量下载，遇到一些困难，有js比较好的同学可以去[issue](https://github.com/HengyueLi/baiduphoto/issues/4)帮着看看。
+- ...
+
 
 # 总结
 虽然只在mac上测试了一下，但是应该其他系统也能用。大致看起来能跑通，基本功能可以实现。有各种问题的话再慢慢研究修复。
