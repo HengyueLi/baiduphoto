@@ -88,16 +88,39 @@ dict_keys(['items', 'has_more', 'cursor'])
 ```
 ilist = api.get_SinglePage()
 alist = api.getAlbumList()
-alist['items'][0].append( ilist['items'][0]  )
+a = alist['items'][0]
+a.append( ilist['items'][0]  )
 ```
-也可以添加多个对象，`alist['items'][0].append( ilist['items'][0:3]  )`
+也可以添加多个对象，`a.append( ilist['items'][0:3]  )`
 
+可以删除该相册:`a.delete()`,默认会删除相册中的子内容。如果只删除相册但是保留子内容，可使用: `a.delete(isWithItems=False)`
+
+获得相册中的所有对象:
+```
+res = a.get_OnlineItems()
+res.keys()
+>>
+dict_keys(['items', 'has_more', 'cursor'])
+```
+看key大约就知道怎么用了吧？其中`items`是一个list，内容是上面讲的`数据对象`。
 
 # 上传文件
 
 ```
 api.upload_1file(filePath='/Users/XXXX/Desktop/test.png')
 ```
+
+# 创建相册
+创建一个名字为`test`的相册：
+```
+a = api.createNewAlbum(Name='test')
+```
+返回的是相册对象（见上面解释）。!!!注意，可以创建名字相同的相册。另外，此处后台来看会用到一个`tid`的信息，来唯一标识一个相册。我不知道这个是怎么生成的，目前用一个18位的随机数来代替测试可行。但这带来一个未来失效的风险。有聪明的同学可以帮我研究研究这个`tid`从哪里来的。
+
+
+# 网络代理
+在初始化对象的时候加入`proxies`字段,例如
+`api = API(cookies = browser_cookie3.chrome() , proxies = {"https":"socks5://127.0.0.1:1080"} )`。`proxies`的格式同`requests`库需求一致。
 
 
 # 总结
