@@ -3,6 +3,10 @@ import io
 import random
 import logging
 import hashlib
+import datetime
+import base64
+
+# import js2py
 from .Requests import Requests
 
 
@@ -127,14 +131,74 @@ class General:
         res = self.req.getReqJson(url=url, params=params)
         return res
 
+    @staticmethod
+    def funcS(j, r):
+        a = []
+        p = []
+        o = ""
+        v = len(j)
+        for q in range(256):
+            a.append(ord(j[q % v]))
+            p.append(q)
+            q += 1
+        u = 0
+        for q in range(256):
+            u = (u + p[q] + a[q]) % 256
+            t = p[q]
+            p[q] = p[u]
+            p[u] = t
+            q += 1
+        i = u = q = 0
+        for q in range(len(r)):
+            i = (i + 1) % 256
+            u = (u + p[i]) % 256
+            t = p[i]
+            p[i] = p[u]
+            p[u] = t
+            k = p[((p[i] + p[u]) % 256)]
+            o += chr(ord(r[q]) ^ k)
+            q += 1
+        return o
+
+    @classmethod
+    def get_sign_by_sign1sign2sign3(cls, sign1, sign2, sign3):
+        funcS = (
+            cls.funcS
+        )  # fun_s = js2py.eval_js(sign2); notice to import js2py and in requirements
+        sign = base64.encodebytes(funcS(sign3, sign1).encode("latin1")).decode()
+        return sign
+
     def batchDonwload_precondition(self):
         # bacth download 之前，此requrest能够得到几条信息（其中还有一个js函数），
         # 需要通过该函数返回的信息计算处sign用于真正的batchdownload，现在还不知道是如何转换的
         url = "https://photo.baidu.com/youai/file/v1/batchdownloadvariable"
         params = {"fields": '["sign1","sign2","sign3","timestamp"]', "clienttype": "70"}
         rdata = self.req.getReqJson(url=url, params=params)
-        # rdata['timestamp']
-        return rdata
+        sign = self.get_sign_by_sign1sign2sign3(
+            rdata["sign1"], rdata["sign2"], rdata["sign3"]
+        )
+        return {"sign": sign, "timestamp": rdata["timestamp"]}
 
-    def batchDonwload(self, items):
-        pass
+    def getdlLink_batchDonwload(self, items, zipname=None):
+        preData = self.batchDonwload_precondition()
+        url = "https://photo.baidu.com/youai/file/v1/batchdownload"
+        fsid_list = [i.get_fsid() for i in items]
+        if zipname is None:
+            now = datetime.datetime.now()
+            zipname = now.strftime("【一刻相册】%H时%M分-批量下载 {} 项.zip").format(len(fsid_list))
+        params = {
+            "clienttype": 70,
+            "fsid_list": "[{}]".format(",".join(fsid_list)),
+            "zipname": zipname,
+            "sign": preData["sign"],
+            "timestamp": preData["timestamp"],
+        }
+        resJson = self.req.getReqJson(url=url, params=params)
+        return resJson["dlink"]
+
+    def getDownloadZip(self, items, dirPath, zipname=None):
+        from .contribution import downLoader
+
+        dl = downLoader(req=self.req)
+        url = self.getdlLink_batchDonwload(items=items, zipname=zipname)
+        dl.getDownloadZip(url=url, dirPath=dirPath, fileName=zipname)

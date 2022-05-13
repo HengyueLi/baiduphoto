@@ -2,7 +2,7 @@
 一刻相册 API
 
 
-(请PR的同学方向指向`develop`分支）
+(请有PR的同学方向指向`develop`分支。有指向master的PR请提前联系讨论一下。也希望有人参与一下下面的`Contribution requests`）
 
 
 # 安装
@@ -122,9 +122,16 @@ a = api.createNewAlbum(Name='test')
 在初始化对象的时候加入`proxies`字段,例如
 `api = API(cookies = browser_cookie3.chrome() , proxies = {"https":"socks5://127.0.0.1:1080"} )`。`proxies`的格式同`requests`库需求一致。
 
-# To do list
-- 批量下载，遇到一些困难，有js比较好的同学可以去[issue](https://github.com/HengyueLi/baiduphoto/issues/4)帮着看看。
-- ...
+# 批量下载
+通过`url = api.get_batchDownloadLink(items,zipname=None)`可以获得一个下载地址，复制到浏览器回车可以下载一个zip包。这其中`items`是一个标准的Python list,内容是`数据对象`。注意如果要用参数`zipname`的话，后缀名要加上`.zip`，不然报错。
+
+
+
+# Contribution requests
+- ~~批量下载，遇到一些困难，有js比较好的同学可以去[issue](https://github.com/HengyueLi/baiduphoto/issues/4)帮着看看。~~(感谢@foxxorcat)
+- 请个厉害的同学做一个带进度条的下载器:[issues](https://github.com/HengyueLi/baiduphoto/issues/5)
+- 请个厉害的同学重新做个花里胡哨文档放到的`README2.md`中，内容跟这里差不多，希望看起来是个像样的文档,直接pr到master
+
 
 
 # 总结

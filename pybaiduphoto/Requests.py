@@ -2,6 +2,17 @@ import requests
 import logging
 
 
+"""
+
+Requests 是python requests的一个简单包装，主要是用于统一cookies和请求参数的作用。
+req.get() 相当于 requests.get()
+req.getReqJson() 相当于 requests.get().json()
+...
+
+
+"""
+
+
 class Requests:
     def __init__(self, cookies, proxies=None):
         self.cookies = cookies

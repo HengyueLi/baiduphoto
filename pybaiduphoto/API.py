@@ -40,7 +40,6 @@ class API:
         # info of one page.   contains a list of photon info
         params = {
             "clienttype": 70,
-            #     'bdstoken':'ba0b17594ad...這有啥用？',
             #     'need_thumbnail':1,
             "need_filter_hidden": 0,
         }
@@ -189,3 +188,6 @@ class API:
         # res = self.req.getReqJson(url=url, params=params)
         # return Album(res["info"], req=self.req)
         # # return res
+
+    def get_batchDownloadLink(self, items, zipname=None):
+        return self.g.getdlLink_batchDonwload(items=items, zipname=zipname)
