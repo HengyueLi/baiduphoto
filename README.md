@@ -2,9 +2,6 @@
 一刻相册 API
 
 
-(请有PR的同学方向指向`develop`分支。有指向master的PR请提前联系讨论一下。也希望有人参与一下下面的`Contribution requests`）
-
-
 # 安装
 ```
 pip install pybaiduphoto
@@ -61,6 +58,8 @@ L[0].info
   ...
  'collect_status': 0}
 ```
+友情提示：为保持良好的OOP代码结构，不推荐直接使用`L[0].info`，内容可能会变化。
+
 对象可以直接下载到本地目录:
 ```
 L=list1["items"]
@@ -76,6 +75,14 @@ if list1['has_more']:
 ```
 L[0].delete()
 ```
+
+high level函数`getAllItems(max=-1)`是对`get_SinglePage`的一个包装，用于获取所有对象。`max`设定最大获取数量，`max<=0`对应获取全部。注意这可能是比较慢的。例如:
+```
+L = api.getAllItems()
+```
+则`L[0]`直接就是一个数据对象。
+
+
 
 ## 相册对象
 ```
@@ -95,19 +102,23 @@ a.append( ilist['items'][0]  )
 
 可以删除该相册:`a.delete()`,默认会删除相册中的子内容。如果只删除相册但是保留子内容，可使用: `a.delete(isWithItems=False)`
 
-获得相册中的所有对象:
+获得相册中的对应数据的方法是:
 ```
-res = a.get_OnlineItems()
-res.keys()
->>
-dict_keys(['items', 'has_more', 'cursor'])
+res = a.get_SinglePage()
 ```
-看key大约就知道怎么用了吧？其中`items`是一个list，内容是上面讲的`数据对象`。
+返回相册中对应的数据对象。用法同`api.get_SinglePage`相同。同时也存在函数`a.getAllItems()`
 
 重命名:
 ```
 a.rename(newName)
 ```
+
+## 人物相册
+```
+pList = api.getAllPersonList()
+```
+pList中的每一个是一个`人物相册`。该对象类似与相册对象，不过是百度自动按照人脸分类了。函数类似的还有`get_SinglePage`和`getAllItems`，用法同上。
+
 
 # 上传文件
 

@@ -1,5 +1,6 @@
 import logging
 from .OnlineItem import OnlineItem
+from .General import getAllItemsBySinglePageFunction
 
 
 class Album:
@@ -70,13 +71,13 @@ class Album:
         url = "https://photo.baidu.com/youai/album/v1/delete"
         return self.req.postReqJson(url, data=data)
 
-    def get_OnlineItems(self, cursor=""):
+    def get_SinglePage(self, cursor=None):
         data = {
             "cursor": cursor,
             "album_id": self.info["album_id"],
-            "need_amount": "1",
-            "limit": "100",
-            "passwd": "",
+            # "need_amount": "1",
+            # "limit": "100",
+            # "passwd": "",
         }
         url = "https://photo.baidu.com/youai/album/v1/listfile"
         res = self.req.postReqJson(url=url, data=data)
@@ -87,6 +88,15 @@ class Album:
             "has_more": res["has_more"] == 1,
             "cursor": res["cursor"],
         }
+
+
+    def get_OnlineItems(self, cursor=""):
+        logging.warning("!!!deprecated method, please change to [get_SinglePage] as soon as possible!!!")
+        return self.get_SinglePage(cursor=cursor)
+
+    def getAllItems(self,max=-1):
+        fun = self.get_SinglePage
+        return getAllItemsBySinglePageFunction(SinglePageFunc=fun,max=max)
 
     def get_AllOnlineItems(self, max=0) -> list:
         cursor = None

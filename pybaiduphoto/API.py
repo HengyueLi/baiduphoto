@@ -6,6 +6,7 @@ from .Requests import Requests
 from .OnlineItem import OnlineItem
 from .Album import Album
 from .General import General
+from .Person import PersonAlbum
 
 
 # def get_md5_by_binString(binString):
@@ -69,27 +70,9 @@ class API:
     #         else:
     #             return r
     def getAllItems(self, max=-1) -> list:
-        # !!! slow !!!
-        r = []
-        c = 0
-        cursor = None
-        while True:
-            page = self.get_SinglePage(cursor=cursor)
-            if max <= 0:
-                r += page["items"]
-                if page["has_more"]:
-                    cursor = page["cursor"]
-                else:
-                    return r
-            else:
-                N = len(page["items"])
-                if c + N >= max:
-                    r += page["items"][: max - c]
-                    return r
-                else:
-                    r += page["items"]
-                    c += N
-                    cursor = page["cursor"]
+        fun = self.get_SinglePage
+        return getAllItemsBySinglePageFunction(SinglePageFunc=fun,max=max)
+
 
     def getAlbumList(self, limit=30, cursor=None):
         url = "https://photo.baidu.com/youai/album/v1/list"
@@ -148,17 +131,6 @@ class API:
     def createNewAlbum(self, Name, tid=None):
         res = self.g.createNewAlbum(Name, tid)
         return Album(res["info"], req=self.req)
-        # url = "https://photo.baidu.com/youai/album/v1/create"
-        # if tid is None:
-        #     tid = str(random.randint(100000000000000000, 999999999999999999))
-        # params = {
-        #     "title": Name,  #
-        #     "source": "0",
-        #     "tid": tid,  # tid 用来唯一标识，title相同的相册可以同时存在 exam=316511988232386428
-        # }
-        # res = self.req.getReqJson(url=url, params=params)
-        # return Album(res["info"], req=self.req)
-        # # return res
 
     def get_batchDownloadLink(self, items, zipname=None):
         return self.g.getdlLink_batchDonwload(items=items, zipname=zipname)
@@ -181,3 +153,17 @@ class API:
             return self.getAlbum_ByInfo(info=data)
         else:
             logging.error("return error in getAlbum_ByID")
+
+    def getPersonList_Onepage(self):
+        # Currently, keep it as internal function. Since when numo of person increase, cursor may be used.
+        url = "https://photo.baidu.com/youai/iclass/person/v2/list"
+        params = {
+        'ishidden': '0',
+        'isrelation': '0',
+        }
+        res = self.req.getReqJson(url = url,params=params)
+        PersonList = [ PersonAlbum(info = info, req=self.req) for info in res['list'] ]
+        return PersonList
+
+    def getAllPersonList(self,max=-1):
+        return self.getPersonList_Onepage()

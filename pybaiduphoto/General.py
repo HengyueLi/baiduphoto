@@ -10,6 +10,35 @@ import base64
 from .Requests import Requests
 
 
+def getAllItemsBySinglePageFunction(SinglePageFunc,max=-1):
+    #----------------------------------------------------------------
+    # def SinglePageFunc(cursor=None) -> dict:
+    #     return { 'items':[] , "has_more":True/False, "cursor"  }
+    #----------------------------------------------------------------
+    cursor = None
+    r = []
+    c = 0
+    while True:
+        page = SinglePageFunc(cursor=cursor)
+        r += page["items"]
+        if page["has_more"]:
+            cursor = page["cursor"]
+            if max > 0:
+                if len(r) >= max:
+                    break
+        else:
+            break
+    if max <= 0:
+        return r
+    else:
+        return r[:max]
+
+
+
+
+
+
+
 class General:
     def __init__(self, req):
         self.req = req
