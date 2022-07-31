@@ -119,3 +119,14 @@ class Album:
     def getInfo(self):
         # as a backup, not use for read directly
         return self.info
+
+    def rename(self, newName):
+        url = "https://photo.baidu.com/youai/album/v1/settitle"
+        data = {
+            "album_id": self.getID(),
+            "tid": self._getTID(),
+            "title": newName,
+        }
+        r = self.req.postReqJson(url, data=data)
+        if r["errno"] == 0:
+            self.info["title"] = newName

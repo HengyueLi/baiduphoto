@@ -104,6 +104,11 @@ dict_keys(['items', 'has_more', 'cursor'])
 ```
 看key大约就知道怎么用了吧？其中`items`是一个list，内容是上面讲的`数据对象`。
 
+重命名:
+```
+a.rename(newName)
+```
+
 # 上传文件
 
 ```
