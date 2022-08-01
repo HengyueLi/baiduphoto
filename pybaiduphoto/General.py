@@ -10,14 +10,13 @@ import base64
 from .Requests import Requests
 
 
-def getAllItemsBySinglePageFunction(SinglePageFunc,max=-1):
-    #----------------------------------------------------------------
+def getAllItemsBySinglePageFunction(SinglePageFunc, max=-1):
+    # ----------------------------------------------------------------
     # def SinglePageFunc(cursor=None) -> dict:
     #     return { 'items':[] , "has_more":True/False, "cursor"  }
-    #----------------------------------------------------------------
+    # ----------------------------------------------------------------
     cursor = None
     r = []
-    c = 0
     while True:
         page = SinglePageFunc(cursor=cursor)
         r += page["items"]
@@ -32,11 +31,6 @@ def getAllItemsBySinglePageFunction(SinglePageFunc,max=-1):
         return r
     else:
         return r[:max]
-
-
-
-
-
 
 
 class General:

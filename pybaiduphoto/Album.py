@@ -89,14 +89,15 @@ class Album:
             "cursor": res["cursor"],
         }
 
-
     def get_OnlineItems(self, cursor=""):
-        logging.warning("!!!deprecated method, please change to [get_SinglePage] as soon as possible!!!")
+        logging.warning(
+            "!!!deprecated method, please change to [get_SinglePage] as soon as possible!!!"
+        )
         return self.get_SinglePage(cursor=cursor)
 
-    def getAllItems(self,max=-1):
+    def getAllItems(self, max=-1):
         fun = self.get_SinglePage
-        return getAllItemsBySinglePageFunction(SinglePageFunc=fun,max=max)
+        return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
 
     def get_AllOnlineItems(self, max=0) -> list:
         cursor = None

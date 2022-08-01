@@ -13,9 +13,8 @@ python = sys.executable
 filepath = os.path.realpath(__file__)
 projpath = os.path.dirname(filepath)
 dist = os.path.join(projpath, "dist")
-sys.path.append(os.environ['PYLIB'])
-from butlerapi import butlerapi,APIfromRequest
-
+sys.path.append(os.environ["PYLIB"])
+from butlerapi import butlerapi, APIfromRequest
 
 
 setupcontext = """
@@ -55,11 +54,11 @@ with open("setup.py", "w") as f:
 os.system("{} setup.py sdist".format(python))
 # ---------------------------------------
 # upload with username&password
-info = butlerapi().getPassword(Class="default",item="pypi")
+info = butlerapi().getPassword(Class="default", item="pypi")
 
 command = "twine upload dist/* -u {username} -p {password}".format(
-    username=info['username'],
-    password=info['password'],
+    username=info["username"],
+    password=info["password"],
 )
 os.system(command)
 # ---------------------------------------

@@ -6,6 +6,7 @@ from .Requests import Requests
 from .OnlineItem import OnlineItem
 from .Album import Album
 from .General import General
+from .General import getAllItemsBySinglePageFunction
 from .Person import PersonAlbum
 
 
@@ -71,8 +72,7 @@ class API:
     #             return r
     def getAllItems(self, max=-1) -> list:
         fun = self.get_SinglePage
-        return getAllItemsBySinglePageFunction(SinglePageFunc=fun,max=max)
-
+        return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
 
     def getAlbumList(self, limit=30, cursor=None):
         url = "https://photo.baidu.com/youai/album/v1/list"
@@ -141,6 +141,9 @@ class API:
     def getAlbum_ByInfo(self, info):
         return Album(info=info, req=self.req)
 
+    def getPerson_ByInfo(self, info):
+        return PersonAlbum(info=info, req=self.req)
+
     def getAlbum_ByID(self, ID):
         params = {
             "album_id": str(ID),
@@ -158,12 +161,12 @@ class API:
         # Currently, keep it as internal function. Since when numo of person increase, cursor may be used.
         url = "https://photo.baidu.com/youai/iclass/person/v2/list"
         params = {
-        'ishidden': '0',
-        'isrelation': '0',
+            "ishidden": "0",
+            "isrelation": "0",
         }
-        res = self.req.getReqJson(url = url,params=params)
-        PersonList = [ PersonAlbum(info = info, req=self.req) for info in res['list'] ]
+        res = self.req.getReqJson(url=url, params=params)
+        PersonList = [PersonAlbum(info=info, req=self.req) for info in res["list"]]
         return PersonList
 
-    def getAllPersonList(self,max=-1):
+    def getAllPersonList(self, max=-1):
         return self.getPersonList_Onepage()
