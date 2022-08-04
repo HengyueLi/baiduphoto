@@ -8,6 +8,8 @@ from .Album import Album
 from .General import General
 from .General import getAllItemsBySinglePageFunction
 from .Person import PersonAlbum
+from .Location import Location
+from .Thing import Thing
 
 
 # def get_md5_by_binString(binString):
@@ -33,28 +35,57 @@ class API:
         self.req = Requests(cookies=cookies, proxies=proxies)
         self.g = General(self.req)
 
+    @staticmethod
+    def getObjectClass(name):
+        table = {
+            "Item": OnlineItem,
+            "Album": Album,
+            "Person": PersonAlbum,
+            "Location": Location,
+            "Thing": Thing,
+        }
+        if name not in table:
+            logging.error("not registrat class by name = [{}]".format(name))
+        else:
+            return table[name]
+
     #     def get(self,method,params):
     #         urlPrefix = 'https://photo.baidu.com/youai/file/v1/'
     #         data = self.req.getReqJson(url = urlPrefix+method.strip(), params=params)
     #         return data
 
+    # def get_SinglePage(self, cursor=None) -> dict:
+    #     # info of one page.   contains a list of photon info
+    #     params = {
+    #         "clienttype": 70,
+    #         #     'need_thumbnail':1,
+    #         "need_filter_hidden": 0,
+    #     }
+    #     if cursor is not None:
+    #         params["cursor"] = cursor
+    #     pageInfo = self.req.getReqJson(
+    #         url="https://photo.baidu.com/youai/file/v1/list", params=params
+    #     )
+    #     return {
+    #         "items": [OnlineItem(i, self.req) for i in pageInfo["list"]],
+    #         "has_more": pageInfo["has_more"] == 1,
+    #         "cursor": pageInfo["cursor"],
+    #     }
+    def get_self_1page(self, typeName, cursor=None) -> dict:
+        cls = self.getObjectClass(typeName)
+        return cls.get_self_1page(req=self.req, cursor=cursor)
+
     def get_SinglePage(self, cursor=None) -> dict:
-        # info of one page.   contains a list of photon info
-        params = {
-            "clienttype": 70,
-            #     'need_thumbnail':1,
-            "need_filter_hidden": 0,
-        }
-        if cursor is not None:
-            params["cursor"] = cursor
-        pageInfo = self.req.getReqJson(
-            url="https://photo.baidu.com/youai/file/v1/list", params=params
-        )
-        return {
-            "items": [OnlineItem(i, self.req) for i in pageInfo["list"]],
-            "has_more": pageInfo["has_more"] == 1,
-            "cursor": pageInfo["cursor"],
-        }
+        logging.warning("Deprecated method!!! use get_self_1page instead!")
+        return self.get_self_1page(typeName="Item", cursor=cursor)
+        # return OnlineItem.get_self_1page(req=self.req,cursor=cursor)
+
+    def get_self_All(self, typeName, max=-1) -> list:
+        cls = self.getObjectClass(typeName)
+        if cls is None:
+            return None
+        else:
+            return cls.get_self_All(req=self.req, max=max)
 
     # def getAllItems(self,max=-1) -> list:
     #     # !!! slow !!!
@@ -70,9 +101,13 @@ class API:
     #             cursor = page['cursor']
     #         else:
     #             return r
+    # def getAllItems(self, max=-1) -> list:
+    #     fun = self.get_SinglePage
+    #     return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
     def getAllItems(self, max=-1) -> list:
-        fun = self.get_SinglePage
-        return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
+        logging.warning("Deprecated method!!! use getAllTargetList instead!")
+        return self.getAllTargetList(typeName="Item", max=max)
+        # return OnlineItem.get_self_All(req=self.req,max=max)
 
     def getAlbumList(self, limit=30, cursor=None):
         url = "https://photo.baidu.com/youai/album/v1/list"
@@ -170,3 +205,7 @@ class API:
 
     def getAllPersonList(self, max=-1):
         return self.getPersonList_Onepage()
+
+    def loadSelfByInfo(self, typeName, info):
+        cls = self.getObjectClass(typeName)
+        return cls.loadSelfByInfo(info=info, req=self.req)

@@ -1,12 +1,32 @@
 import logging
 from .OnlineItem import OnlineItem
 from .General import getAllItemsBySinglePageFunction
+from .apiObject import apiObject
 
 
-class Album:
-    def __init__(self, info, req):
-        self.info = info
-        self.req = req
+class Album(apiObject):
+    @classmethod
+    def get_self_1page(cls, req, cursor=None):
+        url = "https://photo.baidu.com/youai/album/v1/list"
+        params = dict(
+            (
+                ("cursor", cursor),
+                # ("clienttype", "70"),
+                # ('bdstoken', '263...'),
+                # ("limit", limit),
+                ("need_amount", "1"),
+                ("need_member", "1"),
+                ("field", "mtime"),
+            )
+        )
+        pageInfo = req.getReqJson(url, params=params)
+        if pageInfo["list"] is None:
+            return {"items": [], "has_more": False, "cursor": None}
+        return {
+            "items": [cls(i, req) for i in pageInfo["list"]],
+            "has_more": pageInfo["has_more"] == 1,
+            "cursor": pageInfo["cursor"],
+        }
 
     def append(self, itemObjs):
         if type(itemObjs) is not list:
@@ -71,7 +91,11 @@ class Album:
         url = "https://photo.baidu.com/youai/album/v1/delete"
         return self.req.postReqJson(url, data=data)
 
-    def get_SinglePage(self, cursor=None):
+    # def get_SinglePage(self, cursor=None):
+    #     logging.warning("!!deprecated method, use get_sub_1page instead!")
+    #     return self.get_sub_1page(cursor)
+
+    def get_sub_1page(self, cursor=None):
         data = {
             "cursor": cursor,
             "album_id": self.info["album_id"],
@@ -91,32 +115,32 @@ class Album:
 
     def get_OnlineItems(self, cursor=""):
         logging.warning(
-            "!!!deprecated method, please change to [get_SinglePage] as soon as possible!!!"
+            "!!!deprecated method, please change to [get_sub_1page] as soon as possible!!!"
         )
         return self.get_SinglePage(cursor=cursor)
 
-    def getAllItems(self, max=-1):
-        fun = self.get_SinglePage
-        return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
-
-    def get_AllOnlineItems(self, max=0) -> list:
-        cursor = None
-        r = []
-        c = 0
-        while True:
-            page = self.get_OnlineItems(cursor=cursor)
-            r += page["items"]
-            if page["has_more"]:
-                cursor = page["cursor"]
-                if max > 0:
-                    if len(r) >= max:
-                        break
-            else:
-                break
-        if max <= 0:
-            return r
-        else:
-            return r[:max]
+    # def getAllItems(self, max=-1):
+    #     fun = self.get_SinglePage
+    #     return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
+    #
+    # def get_AllOnlineItems(self, max=0) -> list:
+    #     cursor = None
+    #     r = []
+    #     c = 0
+    #     while True:
+    #         page = self.get_OnlineItems(cursor=cursor)
+    #         r += page["items"]
+    #         if page["has_more"]:
+    #             cursor = page["cursor"]
+    #             if max > 0:
+    #                 if len(r) >= max:
+    #                     break
+    #         else:
+    #             break
+    #     if max <= 0:
+    #         return r
+    #     else:
+    #         return r[:max]
 
     def getName(self):
         return self.info["title"]
@@ -127,9 +151,9 @@ class Album:
     def _getTID(self):
         return self.info["tid"]
 
-    def getInfo(self):
-        # as a backup, not use for read directly
-        return self.info
+    # def getInfo(self):
+    #     # as a backup, not use for read directly
+    #     return self.info
 
     def rename(self, newName):
         url = "https://photo.baidu.com/youai/album/v1/settitle"

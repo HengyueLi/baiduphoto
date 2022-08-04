@@ -1,12 +1,29 @@
 import os
 import hashlib
 import logging
+from .apiObject import apiObject
 
 
-class OnlineItem:
-    def __init__(self, info, req):
-        self.info = info
-        self.req = req
+class OnlineItem(apiObject):
+    # def __init__(self, info, req):
+    #     self.info = info
+    #     self.req = req
+
+    @classmethod
+    def get_self_1page(cls, req, cursor=None):
+        params = {
+            "cursor": cursor,
+            #     'need_thumbnail':1,
+            "need_filter_hidden": 0,
+        }
+        pageInfo = req.getReqJson(
+            url="https://photo.baidu.com/youai/file/v1/list", params=params
+        )
+        return {
+            "items": [cls(i, req) for i in pageInfo["list"]],
+            "has_more": pageInfo["has_more"] == 1,
+            "cursor": pageInfo["cursor"],
+        }
 
     def getContent_byRequest(self):
         r = self.req.getReqJson(
@@ -62,8 +79,8 @@ class OnlineItem:
     def getID(self):
         return self.get_fsid()
 
-    def getInfo(self):
-        return self.info
+    # def getInfo(self):
+    #     return self.info
 
     def getFileName(self):
         return self.info["path"].split("/")[-1]

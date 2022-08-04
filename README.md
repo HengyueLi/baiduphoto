@@ -38,7 +38,7 @@ api = API(cookies = browser_cookie3.chrome() )
 ## 数据对象
 数据对象是指图片或者视频。首先要得到对象的列表信息。因为量比较大，所以信息是分页的。获取第一页的方式如下:
 ```
-list1 = api.get_SinglePage()
+list1 = api.get_self_1page(typeName='Item')
 ```
 其返回值包含以下内容：
 ```
@@ -69,16 +69,16 @@ L[0].download(DirPath='/Users/XXXX/Desktop')
 ```
 if list1['has_more']:
     cursor_nextpage = list1['cursor']
-    list2 = api.get_SinglePage(cursor=cursor_nextpage)
+    list2 = api.get_self_1page(typeName='Item',cursor=cursor_nextpage)
 ```
 可以删除:
 ```
 L[0].delete()
 ```
 
-high level函数`getAllItems(max=-1)`是对`get_SinglePage`的一个包装，用于获取所有对象。`max`设定最大获取数量，`max<=0`对应获取全部。注意这可能是比较慢的。例如:
+high level函数`get_self_All(typeName='Item',typemax=-1)`是对`get_self_1page`的一个包装，用于获取所有对象。`max`设定最大获取数量，`max<=0`对应获取全部。注意这可能是比较慢的。例如(注意，内容多的话可能有点慢):
 ```
-L = api.getAllItems()
+L = api.get_self_All(typeName='Item')
 ```
 则`L[0]`直接就是一个数据对象。
 
@@ -86,15 +86,15 @@ L = api.getAllItems()
 
 ## 相册对象
 ```
-list1 = api.getAlbumList()
+list1 = api.get_self_1page(typeName='Album')
 list1.keys()
 >>
 dict_keys(['items', 'has_more', 'cursor'])
 ```
 其中`has_more`, `cursor`意义上同。items中的对象是`相册对象`。可以用过`append`将图片添加到相册。例子: 将最后一张照片添加到第一个相册:
 ```
-ilist = api.get_SinglePage()
-alist = api.getAlbumList()
+ilist = api.get_self_1page(typeName='Item')
+alist = api.get_self_1page(typeName='Album')
 a = alist['items'][0]
 a.append( ilist['items'][0]  )
 ```
@@ -104,9 +104,15 @@ a.append( ilist['items'][0]  )
 
 获得相册中的对应数据的方法是:
 ```
-res = a.get_SinglePage()
+res = a.get_sub_1page()
 ```
-返回相册中对应的数据对象。用法同`api.get_SinglePage`相同。同时也存在函数`a.getAllItems()`
+返回相册中对应的数据对象。返回内容的key为`dict_keys(['items', 'has_more', 'cursor'])`。用法同`get_self_1page()`。同时也存在函数`a.get_sub_All(max=-1)`
+
+获取相册的名字或者ID:
+```
+a.getName()
+a.getID()
+```
 
 重命名:
 ```
@@ -114,10 +120,18 @@ a.rename(newName)
 ```
 
 ## 人物相册
+用法参考上面的相册对象，只是把`typeName`设置成`Person`。例如获得所有的人物相册的方式：
 ```
-pList = api.getAllPersonList()
+pList = api.get_self_All(typeName='Person')
 ```
-pList中的每一个是一个`人物相册`。该对象类似与相册对象，不过是百度自动按照人脸分类了。函数类似的还有`get_SinglePage`和`getAllItems`，用法同上。
+该对象类似与相册对象，不过是百度自动按照人脸分类了。函数类似的还有`get_sub_1page`和`get_sub_All`，用法同上。
+
+## 地点相册
+用法同上，设置`typeName='Location'`
+
+## 事物相册
+用法同上，设置`typeName='Thing'`
+
 
 
 # 上传文件
@@ -145,8 +159,6 @@ a = api.createNewAlbum(Name='test')
 
 # Contribution requests
 - ~~批量下载，遇到一些困难，有js比较好的同学可以去[issue](https://github.com/HengyueLi/baiduphoto/issues/4)帮着看看。~~(感谢@foxxorcat)
-- 请个厉害的同学做一个带进度条的下载器:[issues](https://github.com/HengyueLi/baiduphoto/issues/5)
-- 请个厉害的同学重新做个花里胡哨文档放到的`README2.md`中，内容跟这里差不多，希望看起来是个像样的文档,直接pr到master
 
 
 
