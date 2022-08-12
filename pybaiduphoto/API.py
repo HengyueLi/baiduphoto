@@ -144,11 +144,11 @@ class API:
             else:
                 return r
 
-    def upload_1file(self, filePath, alumbInfo=None):
-        preC, reqJson1, reqJson2, reqJson3 = self.g.upload_1file(filePath, alumbInfo)
+    def upload_1file(self, filePath, alumb=None):
+        preC, reqJson1, reqJson2 = self.g.upload_1file(filePath, alumb)
         logging.debug(
-            "upload file: preC=\n{}\n,reqJson1=\n{}\n, reqJson2=\n{}\n, reqJson3=\n{}\n ".format(
-                preC, reqJson1, reqJson2, reqJson3
+            "upload file: preC=\n{}\n,reqJson1=\n{}\n, reqJson2=\n{}\n ".format(
+                preC, reqJson1, reqJson2
             )
         )
         if preC["return_type"] == 1:  # new upload
