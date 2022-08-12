@@ -129,18 +129,38 @@ class General:
             "https://photo.baidu.com/youai/file/v1/create", params=params, data=data
         ).json()
 
-    def upload_1file(self, filePath):
+    def upload_step4_addfile(self, createInfo, albumInfo):
+        params = dict(
+            (
+                ("clienttype", "70"),
+                ('bdstoken', self.req.bdstoken),
+                ('album_id', albumInfo.info['album_id']),
+                ('tid', albumInfo.info['tid']),
+                ('list', "[{\"fsid\": %s}]" % (createInfo['data']['fs_id']))
+            )
+        )
+
+        logging.debug("upload_step4,params={}".format(params))
+        return self.req.getReqJson(
+            "https://photo.baidu.com/youai/album/v1/addfile", params=params
+        )
+
+    def upload_1file(self, filePath, albumInfo=None):
         # get_file_fullContent,fileName,localFilePath,size,ctime,mtime,md5,bin
         fobj = self.get_file_fullContent(filePath)
         preC = self.upload_step1_preCreate(fobj)
         if preC.get("uploadid", None) is not None:
             reqJson1 = self.upload_step2_superfile2(preCreateInfo=preC, fileFull=fobj)
             reqJson2 = self.upload_step3_create(preCreateInfo=preC, fileFull=fobj)
-            return preC, reqJson1, reqJson2
+            if albumInfo is not None:
+                reqJson3 = self.upload_step4_addfile(createInfo=reqJson2, albumInfo=albumInfo)
+            else:
+                reqJson3 = None
+            return preC, reqJson1, reqJson2, reqJson3
         else:
             pass
             # file exsis online, 確認網頁操作時也沒有重新上傳
-            return preC, None, None
+            return preC, None, None, None
 
     def createNewAlbum(self, Name, tid=None):
         url = "https://photo.baidu.com/youai/album/v1/create"

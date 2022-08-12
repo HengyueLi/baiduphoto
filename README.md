@@ -140,6 +140,13 @@ pList = api.get_self_All(typeName='Person')
 api.upload_1file(filePath='/Users/XXXX/Desktop/test.png')
 ```
 
+## 若要上传到指定相册
+
+```
+api.upload_1file(filePath='/Users/XXXX/Desktop/test.png', alumbInfo=list1['items'][0])
+```
+其中list1['items'][0] 获取相册列表得到的相册
+
 # 创建相册
 创建一个名字为`test`的相册：
 ```
