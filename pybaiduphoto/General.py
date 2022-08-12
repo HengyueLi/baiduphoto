@@ -5,7 +5,6 @@ import logging
 import hashlib
 import datetime
 import base64
-from pybaiduphoto import OnlineItem
 
 # import js2py
 from .Requests import Requests
@@ -130,7 +129,7 @@ class General:
             "https://photo.baidu.com/youai/file/v1/create", params=params, data=data
         ).json()
 
-    def upload_1file_directly(self, filePath):
+    def upload_1file(self, filePath):
         # get_file_fullContent,fileName,localFilePath,size,ctime,mtime,md5,bin
         fobj = self.get_file_fullContent(filePath)
         preC = self.upload_step1_preCreate(fobj)
@@ -142,13 +141,6 @@ class General:
             pass
             # file exsis online, 確認網頁操作時也沒有重新上傳
             return preC, None, None
-
-    def upload_1file(self, filePath, album=None):
-        preC, reqJson1, reqJson2 = self.upload_1file_directly(filePath)
-        item = OnlineItem(reqJson2['data'], self.req)
-        album.append(item)
-        return preC, reqJson1, reqJson2
-
 
     def createNewAlbum(self, Name, tid=None):
         url = "https://photo.baidu.com/youai/album/v1/create"

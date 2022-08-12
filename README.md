@@ -94,7 +94,7 @@ dict_keys(['items', 'has_more', 'cursor'])
 其中`has_more`, `cursor`意义上同。items中的对象是`相册对象`。可以用过`append`将图片添加到相册。例子: 将最后一张照片添加到第一个相册:
 ```
 ilist = api.get_self_1page(typeName='Item')
-alist = api.get_self_1page(typeName='Album')
+alist = api.get_self_1page(typeName='Album')  
 a = alist['items'][0]
 a.append( ilist['items'][0]  )
 ```
@@ -140,12 +140,12 @@ pList = api.get_self_All(typeName='Person')
 api.upload_1file(filePath='/Users/XXXX/Desktop/test.png')
 ```
 
-## 若要上传到指定相册
+若要上传到指定相册
 
 ```
-api.upload_1file(filePath='/Users/XXXX/Desktop/test.png', alumbInfo=list1['items'][0])
+api.upload_1file(filePath='/Users/XXXX/Desktop/test.png', album=a)
 ```
-其中list1['items'][0] 获取相册列表得到的相册
+其中`a`是获取相册列表得到的相册，例如`a=api.get_self_1page(typeName='Album')['items'][0]`。
 
 # 创建相册
 创建一个名字为`test`的相册：

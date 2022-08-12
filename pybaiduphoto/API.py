@@ -144,8 +144,8 @@ class API:
             else:
                 return r
 
-    def upload_1file(self, filePath, alumb=None):
-        preC, reqJson1, reqJson2 = self.g.upload_1file(filePath, alumb)
+    def upload_1file_directly(self, filePath):
+        preC, reqJson1, reqJson2 = self.g.upload_1file(filePath)
         logging.debug(
             "upload file: preC=\n{}\n,reqJson1=\n{}\n, reqJson2=\n{}\n ".format(
                 preC, reqJson1, reqJson2
@@ -161,7 +161,19 @@ class API:
             logging.warning("upload item already exist on remote")
             return self.getOnlineItem_ByInfo(info=preC["data"])
         else:
+            logging.error(
+                "unknow return_type ={} @upload_1file_directly".format(
+                    preC["return_type"]
+                )
+            )
             return
+
+    def upload_1file(self, filePath, album=None):
+        # consider upload into alumb
+        item = self.upload_1file_directly(filePath=filePath)
+        if album is not None and item is not None:
+            album.append(item)
+        return item
 
     def createNewAlbum(self, Name, tid=None):
         res = self.g.createNewAlbum(Name, tid)
