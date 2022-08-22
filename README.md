@@ -76,7 +76,7 @@ if list1['has_more']:
 L[0].delete()
 ```
 
-high level函数`get_self_All(typeName='Item',typemax=-1)`是对`get_self_1page`的一个包装，用于获取所有对象。`max`设定最大获取数量，`max<=0`对应获取全部。注意这可能是比较慢的。例如(注意，内容多的话可能有点慢):
+high level函数`get_self_All(typeName='Item',max=-1)`是对`get_self_1page`的一个包装，用于获取所有对象。`max`设定最大获取数量，`max<=0`对应获取全部。注意这可能是比较慢的。例如(注意，内容多的话可能有点慢):
 ```
 L = api.get_self_All(typeName='Item')
 ```
