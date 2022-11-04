@@ -151,6 +151,11 @@ class API:
                 preC, reqJson1, reqJson2
             )
         )
+        print(
+            "upload file: preC=\n{}\n,reqJson1=\n{}\n, reqJson2=\n{}\n ".format(
+                preC, reqJson1, reqJson2
+            )
+        )
         if preC["return_type"] == 1:  # new upload
             # if reqJson2 is not None:
             info = reqJson2["data"]
@@ -172,6 +177,7 @@ class API:
         # consider upload into alumb
         item = self.upload_1file_directly(filePath=filePath)
         if album is not None and item is not None:
+            print('照片加入相册')
             album.append(item)
         return item
 
