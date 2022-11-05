@@ -2,12 +2,15 @@ import json
 import os
 import datetime
 import base64
-import cv2
-import filetype
-from PIL import Image
 
 
-# import execjs
+#----------------------------
+# used by getMediaInfo
+# import cv2
+# import filetype   # 无法识别 HEIC
+# from PIL import Image
+
+
 
 def G(e):
     '''
@@ -270,4 +273,11 @@ def getMediaInfo(shoot_time, media_path):
     retinfo = JencodeString(media_info_str)
     # print(ret)
     # print(video_title)
+    return retinfo
+
+
+def getMediaInfo_interface( media_path):
+    shoot_time = getCreateTime(media_path)
+    media_info_str = '{"file":{"creation_time":"%s","file_size":%s}}'%(timestamp_to_strtime2(shoot_time),os.path.getsize(media_path))
+    retinfo = JencodeString(media_info_str)
     return retinfo

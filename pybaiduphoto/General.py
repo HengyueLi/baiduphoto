@@ -44,23 +44,16 @@ class General:
         with open(filePath, "rb") as f:
             binString = f.read()
             md5 = hashlib.md5(binString).hexdigest()
-        ct_ = muyangren907_shoot_time.getCreateTime(filePath)
 
         return {
             "fileName": os.path.basename(filePath),
             "localFilePath": filePath,
             "size": os.path.getsize(filePath),
-            # "ctime": int(os.path.getctime(filePath))*1000,
-            # "mtime": int(os.path.getmtime(filePath))*1000,
-
-            "ctime": ct_,
-            "mtime": ct_,
-            # "ctime": int(os.path.getctime(filePath)),
-            # "mtime": int(os.path.getmtime(filePath)),
-            # "shoot_time": int(os.path.getctime(filePath)),
+            "ctime": int(os.path.getctime(filePath)),
+            "mtime": int(os.path.getmtime(filePath)),
             "md5": md5,
             "bin": binString,
-            "media_info":muyangren907_shoot_time.getMediaInfo(ct_,filePath)
+            "media_info":muyangren907_shoot_time.getMediaInfo_interface(filePath)
         }
 
     def upload_step1_preCreate(self, fileFull):
