@@ -1,5 +1,6 @@
 requests>=2.22.0
 rich==10.16.1
+
 filetype
 Pillow
 opencv-python
