@@ -165,3 +165,14 @@ class Album(apiObject):
         r = self.req.postReqJson(url, data=data)
         if r["errno"] == 0:
             self.info["title"] = newName
+
+    def setNotice(self,notice):
+        url = "https://photo.baidu.com/youai/album/v1/setnotice"
+        params = {
+            'clienttype': '70',
+            'album_id': self.getID(),
+            'tid': self._getTID(),
+            'notice': notice,
+        }
+        r = self.req.getReqJson(url=url,params=params)
+        return self 

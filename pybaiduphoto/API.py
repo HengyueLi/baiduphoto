@@ -6,28 +6,11 @@ from .Requests import Requests
 from .OnlineItem import OnlineItem
 from .Album import Album
 from .General import General
-from .General import getAllItemsBySinglePageFunction
+
+# from .General import getAllItemsBySinglePageFunction
 from .Person import PersonAlbum
 from .Location import Location
 from .Thing import Thing
-
-
-# def get_md5_by_binString(binString):
-#     return hashlib.md5(binString).hexdigest()
-#
-# def get_md5_by_LocalFile(filePath):
-#     with open(filePath,'rb') as f:
-#         return hashlib.md5(f.read()).hexdigest()
-#
-# def get_metadata_localFile(filePath):
-#     return {
-#         'fileName' : os.path.basename(filePath),
-#         'localFilePath' : filePath,
-#         'size' : os.path.getsize(filePath),
-#         'ctime': int(os.path.getctime(filePath)),
-#         'mtime': int(os.path.getmtime(filePath)),
-#         'md5':get_md5_by_LocalFile(filePath),
-#     }
 
 
 class API:
@@ -49,28 +32,6 @@ class API:
         else:
             return table[name]
 
-    #     def get(self,method,params):
-    #         urlPrefix = 'https://photo.baidu.com/youai/file/v1/'
-    #         data = self.req.getReqJson(url = urlPrefix+method.strip(), params=params)
-    #         return data
-
-    # def get_SinglePage(self, cursor=None) -> dict:
-    #     # info of one page.   contains a list of photon info
-    #     params = {
-    #         "clienttype": 70,
-    #         #     'need_thumbnail':1,
-    #         "need_filter_hidden": 0,
-    #     }
-    #     if cursor is not None:
-    #         params["cursor"] = cursor
-    #     pageInfo = self.req.getReqJson(
-    #         url="https://photo.baidu.com/youai/file/v1/list", params=params
-    #     )
-    #     return {
-    #         "items": [OnlineItem(i, self.req) for i in pageInfo["list"]],
-    #         "has_more": pageInfo["has_more"] == 1,
-    #         "cursor": pageInfo["cursor"],
-    #     }
     def get_self_1page(self, typeName, cursor=None) -> dict:
         cls = self.getObjectClass(typeName)
         return cls.get_self_1page(req=self.req, cursor=cursor)
@@ -78,7 +39,6 @@ class API:
     def get_SinglePage(self, cursor=None) -> dict:
         logging.warning("Deprecated method!!! use get_self_1page instead!")
         return self.get_self_1page(typeName="Item", cursor=cursor)
-        # return OnlineItem.get_self_1page(req=self.req,cursor=cursor)
 
     def get_self_All(self, typeName, max=-1) -> list:
         cls = self.getObjectClass(typeName)
@@ -87,27 +47,9 @@ class API:
         else:
             return cls.get_self_All(req=self.req, max=max)
 
-    # def getAllItems(self,max=-1) -> list:
-    #     # !!! slow !!!
-    #     r = []
-    #     c = 0
-    #     cursor = None
-    #     while True:
-    #         page = self.get_SinglePage(cursor=cursor)
-    #         # N = len(page['items'])
-    #         if max <= 0:
-    #         r += page['items']
-    #         if page['has_more']:
-    #             cursor = page['cursor']
-    #         else:
-    #             return r
-    # def getAllItems(self, max=-1) -> list:
-    #     fun = self.get_SinglePage
-    #     return getAllItemsBySinglePageFunction(SinglePageFunc=fun, max=max)
     def getAllItems(self, max=-1) -> list:
         logging.warning("Deprecated method!!! use getAllTargetList instead!")
         return self.getAllTargetList(typeName="Item", max=max)
-        # return OnlineItem.get_self_All(req=self.req,max=max)
 
     def getAlbumList(self, limit=30, cursor=None):
         url = "https://photo.baidu.com/youai/album/v1/list"
@@ -166,12 +108,18 @@ class API:
                     preC["return_type"]
                 )
             )
+            logging.error("full response = [{}]".format(str(preC)))
             return
 
     def upload_1file(self, filePath, album=None):
         # consider upload into alumb
         item = self.upload_1file_directly(filePath=filePath)
         if album is not None and item is not None:
+            logging.debug(
+                "append item into album. item=[{}],album=[{}]".format(
+                    item.info, album.info
+                )
+            )
             album.append(item)
         return item
 
@@ -221,3 +169,23 @@ class API:
     def loadSelfByInfo(self, typeName, info):
         cls = self.getObjectClass(typeName)
         return cls.loadSelfByInfo(info=info, req=self.req)
+
+    def albumSearch(self, keyword, limit=30, start=0):
+        R = {}
+        params = {
+            "clienttype": "70",
+            "keyword": keyword,
+            "limit": limit,
+            "start": start,
+        }
+        req = self.g.req
+        res = req.getReqJson(
+            url="https://photo.baidu.com/youai/album/v1/search",
+            params=params,
+        )
+        abList = []
+        for info in res["list"]:
+            abList.append(self.getAlbum_ByInfo(info=info))
+        R["items"] = abList
+        R["has_more"] = res["has_more"] == 1
+        return R

@@ -12,6 +12,7 @@ from .cooperation import muyangren907_shoot_time
 # import js2py
 from .Requests import Requests
 
+
 def getAllItemsBySinglePageFunction(SinglePageFunc, max=-1):
     # ----------------------------------------------------------------
     # def SinglePageFunc(cursor=None) -> dict:
@@ -53,7 +54,7 @@ class General:
             "mtime": int(os.path.getmtime(filePath)),
             "md5": md5,
             "bin": binString,
-            "media_info":muyangren907_shoot_time.getMediaInfo_interface(filePath)
+            "media_info": muyangren907_shoot_time.getMediaInfo_interface(filePath),
         }
 
     def upload_step1_preCreate(self, fileFull):
@@ -72,7 +73,7 @@ class General:
             "local_mtime": fileFull["mtime"],
             # "shoot_time": fileFull["shoot_time"],
             # 'media_info': 'QD1xoOXfdIsFhss...' # 包含shoot_time
-            'media_info': fileFull["media_info"], # 包含shoot_time
+            "media_info": fileFull["media_info"],  # 包含shoot_time
         }
         params = {
             "clienttype": "70",
@@ -130,7 +131,7 @@ class General:
             "rtype": "1",
             "content-md5": fileFull["md5"],
             "ctype": "11",
-            'media_info': fileFull["media_info"]
+            "media_info": fileFull["media_info"]
             #           'media_info': 'QD1xoOX.....'
         }
         logging.debug("upload_step3,postData={}".format(data))
