@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import io
 import random
@@ -36,8 +37,24 @@ def getAllItemsBySinglePageFunction(SinglePageFunc, max=-1):
         return r[:max]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class General:
-    def __init__(self, req):
+    def __init__(self, req:Requests):
         self.req = req
 
     @staticmethod

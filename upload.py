@@ -57,9 +57,10 @@ os.system("{} setup.py sdist".format(python))
 info = butlerapi().getPassword(Class="default", item="pypi")
 
 command = "twine upload dist/* -u {username} -p {password}".format(
-    username=info["username"],
-    password=info["password"],
+    username="__token__",
+    password=info["token"],
 )
+
 os.system(command)
 # ---------------------------------------
 os.system("rm -rf dist setup.py *egg-info*")

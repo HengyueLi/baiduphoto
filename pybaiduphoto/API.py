@@ -13,6 +13,70 @@ from .Location import Location
 from .Thing import Thing
 
 
+
+
+class ImportFromNDisk():
+
+    def __init__(self,req: Requests):
+        self.req = req 
+
+    def listPath(self,path:str):
+        url = "https://photo.baidu.com/youai/import/v1/ndpathlist"
+        params = {"path":path}
+        res = self.req.getReqJson(url=url,params=params)
+        if res['errno'] == 0:
+            return res['list']
+        else:
+            logging.error(str(res))
+            raise Exception("error @listPath")
+        
+    def importDirByfsid(self,fsid):
+        url = "https://photo.baidu.com/youai/import/v1/create"
+        params = { 
+            "type":2 ,
+            "time_range":10, 
+            "category":13,
+            "fsid_list":f"[{fsid}]"
+         }
+        res = self.req.getReqJson(url=url,params=params)
+        return res 
+
+    def recurciveImportDir(self,dirPath:str):
+        segs = [seg for seg in dirPath.split("/") if len(seg)>0 ]
+        if len(segs) == 0:
+            logging.error(f"illegal format of dirPath={dirPath}")
+            raise Exception("error @recurciveImportDir")
+        fatherDir="/"+"/".join(segs[:-1])
+        listdir = self.listPath(path=fatherDir)
+        fs_id = None
+        for item in listdir:
+            if item['path'] == dirPath:
+                fs_id = item['fs_id'] 
+                isdir = item['isdir']
+                break 
+        if fs_id is None:
+            raise Exception(f"cannot find dirPath = {dirPath} error @recurciveImportDir")
+        if isdir !=1 :
+            raise Exception(f"only support importing directory. error @recurciveImportDir")
+        return self.importDirByfsid(fsid=fs_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class API:
     def __init__(self, cookies, proxies={}):
         self.req = Requests(cookies=cookies, proxies=proxies)
@@ -189,3 +253,14 @@ class API:
         R["items"] = abList
         R["has_more"] = res["has_more"] == 1
         return R
+    
+
+    def importFromPanDisk(self,dirPath:str):
+        """import items from baidu-Pandisk
+
+        Args:
+            dirPath (str): the path in Pandisk. example: dirPath="/我的资源"
+        """   
+        return ImportFromNDisk(req=self.req).recurciveImportDir(dirPath=dirPath)
+     
+

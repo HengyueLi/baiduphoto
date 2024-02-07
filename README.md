@@ -176,6 +176,17 @@ aList = api.albumSearch(keyword="xxxx"，limit=30,start=0)
 ## 批量下载
 通过`url = api.get_batchDownloadLink(items,zipname=None)`可以获得一个下载地址，复制到浏览器回车可以下载一个zip包。这其中`items`是一个标准的Python list,内容是`数据对象`。注意如果要用参数`zipname`的话，后缀名要加上`.zip`，不然报错。
 
+## 从百度网盘导入
+
+例子:
+
+```
+api.importFromPanDisk(dirPath="/anime")
+```
+
+其中`anime`是百度网盘中的一个文件夹。也可以是更长的路径如`dirPath="/path1/path2/path3"`。该函数本身没有延迟，但是调用完成后需要等待一刻相册后端慢慢传输数据完成。另外官方说了，从网盘导入目前只支持文件夹。
+
+
 
 
 # Contribution requests
