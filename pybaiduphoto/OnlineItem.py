@@ -26,7 +26,23 @@ class OnlineItem(apiObject):
         }
 
     def getContent_byRequest(self):
-        req = self.req.get(self.info['dlink'])
+        dlink = self.info.get('dlink',None) 
+
+        if dlink is None:
+            res = self.req.getReqJson(
+                url="https://photo.baidu.com/youai/file/v2/download",
+                params={
+                    "clienttype": "70",
+                    #             'bdstoken': 'ba0b17594add5...?',
+                    "fsid": self.info["fsid"],
+                },
+            )
+            dlink = res.get("dlink",None) 
+
+            if dlink is None:
+                raise Exception(f"cannot find 'dlink' of {str(self)}")
+
+        req = self.req.get(dlink)
         return req.content
 
     def download(self, DirPath:str|None = None, fileName:str|None = None, isCheckMd5:bool=True):
