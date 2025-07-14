@@ -28,7 +28,7 @@ setuptools.setup(
     author='Hengyue Li',
     author_email='305069590@qq.com',
     packages=setuptools.find_packages(),
-    license='LICENSE.md',
+    license_file='LICENSE.md',
     description='{description}',
     long_description=open('README.md',encoding="utf8").read(),
     long_description_content_type="text/markdown",
