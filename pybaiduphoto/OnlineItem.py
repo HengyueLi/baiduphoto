@@ -53,7 +53,7 @@ class OnlineItem(apiObject):
         if isCheckMd5:
             localMd5 = hashlib.md5(fileContent).hexdigest()
             if self.info["md5"] != localMd5:
-                info.error("md5 check error, file=[{}]".format(filePath))
+                print("MD5 check error, file=[{}]".format(filePath))  # 简单打印错误
 
     def delete(self, fdis_list=None):
         url = "https://photo.baidu.com/youai/file/v1/delete"
