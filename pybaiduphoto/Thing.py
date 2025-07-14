@@ -35,3 +35,7 @@ class Thing(apiObject):
 
     def getName(self):
         return self.info["tag_name"].replace("/", "_")
+
+    def __repr__(self)->str:
+        prt = f'Thing({self.getName()},{self.getID()})'
+        return prt

@@ -35,3 +35,7 @@ class Location(apiObject):
 
     def getName(self):
         return self.info["tag_name"]
+
+    def __repr__(self)->str:
+        prt = f'Location({self.getName()},{self.getID()})'
+        return prt

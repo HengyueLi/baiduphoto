@@ -26,18 +26,10 @@ class OnlineItem(apiObject):
         }
 
     def getContent_byRequest(self):
-        r = self.req.getReqJson(
-            url="https://photo.baidu.com/youai/file/v2/download",
-            params={
-                "clienttype": "70",
-                #             'bdstoken': 'ba0b17594add5...?',
-                "fsid": self.info["fsid"],
-            },
-        )
-        req = self.req.get(r["dlink"])
+        req = self.req.get(self.info['dlink'])
         return req.content
 
-    def download(self, DirPath=None, fileName=None, isCheckMd5=True):
+    def download(self, DirPath:str|None = None, fileName:str|None = None, isCheckMd5:bool=True):
         if DirPath is None:
             DirPath = os.getcwd()
         if fileName is None:
@@ -53,6 +45,7 @@ class OnlineItem(apiObject):
         if isCheckMd5:
             localMd5 = hashlib.md5(fileContent).hexdigest()
             if self.info["md5"] != localMd5:
+                logging.error("md5 check error, file=[{}]".format(filePath))
                 print("MD5 check error, file=[{}]".format(filePath))  # 简单打印错误
 
     def delete(self, fdis_list=None):
@@ -67,8 +60,7 @@ class OnlineItem(apiObject):
         r = self.req.getReqJson(url, params=params)
         return r
 
-    # def get_fsid(self):
-    # return str(self.info["fsid"])
+
     def get_fsid(self):
         if "fsid" in self.info:
             return str(self.info["fsid"])
@@ -96,3 +88,7 @@ class OnlineItem(apiObject):
 
     def getModificationDate(self):
         return self.info["mtime"]
+    
+    def __repr__(self):
+        prt = f'Item({self.getName()},{self.getID()})'
+        return prt

@@ -176,3 +176,8 @@ class Album(apiObject):
         }
         r = self.req.getReqJson(url=url,params=params)
         return self 
+    
+
+    def __repr__(self)->str:
+        prt = f"Album({self.getName()},{self.getID()})"  
+        return prt
